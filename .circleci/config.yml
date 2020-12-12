@@ -9,8 +9,10 @@ jobs:
                 version: 19.03.13
             # Download and cache dependencies
             - run:
-                name: Install docker-compose
+                name: Install docker and docker-compose
                 command: |
+                    echo jhipster | sudo -S apt update
+                    echo jhipster | sudo -S apt install -y docker.io
                     echo jhipster | sudo -S curl -Lo /usr/local/bin/docker-compose $(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-Linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
                     echo jhipster | sudo -S chmod +x /usr/local/bin/docker-compose
                     docker version
