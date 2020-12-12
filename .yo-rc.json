@@ -13,7 +13,7 @@
     "jhiPrefix": "jhi",
     "entitySuffix": "",
     "dtoSuffix": "DTO",
-    "testFrameworks": [],
+    "testFrameworks": ["cypress"],
     "pages": [],
     "creationTimestamp": 1607767338234,
     "promptValues": {
