@@ -51,7 +51,7 @@ jobs:
                 command: './snyk test --all-projects'
             - run:
                 name: Snyk monitor
-                run: './snyk monitor --all-projects'
+                command: './snyk monitor --all-projects'
             - save_cache:
                 paths:
                     - node
