@@ -1,0 +1,8 @@
+{
+  "generator-jhipster:6.10.5": {
+    "promptValues": {
+      "packageName": "io.github.pascalgrimaud",
+      "nativeLanguage": "en"
+    }
+  }
+}
