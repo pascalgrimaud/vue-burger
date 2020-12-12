@@ -21,11 +21,13 @@ jobs:
                   java-version: '11.x'
             - name: Install node.js packages
               run: npm install
-            - name: Install Snyk
-              run: npm install -g snyk
-            - name: Snyk Test
+            - name: Install Snyk CLI
+              run: |
+                  curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux"" | cut -d ':' -f 2,3 | tr -d " | tr -d ' ')
+                  chmod +x snyk
+            - name: Snyk test
               continue-on-error: true
-              run: snyk test --all-projects
+              run: ./snyk test --all-projects
               env:
                   SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
             - name: Run backend test
