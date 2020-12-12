@@ -13,6 +13,7 @@ jobs:
                 command: |
                     echo jhipster | sudo -S curl -Lo /usr/local/bin/docker-compose $(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-Linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
                     echo jhipster | sudo -S chmod +x /usr/local/bin/docker-compose
+                    docker version
                     docker-compose version
             - restore_cache:
                 keys:
