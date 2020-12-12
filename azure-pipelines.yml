@@ -24,13 +24,13 @@ jobs:
         inputs:
           command: 'install'
         displayName: 'INSTALL: launch npm install'
-      - displayName: Install Snyk CLI
+      - displayName: 'INSTALL: Snyk CLI'
         script: |
           curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
           chmod +x snyk
-      - displayName: Snyk test
+      - displayName: 'CHECK: Snyk test'
         script: ./snyk test --all-projects || true
-      - displayName: Snyk monitor
+      - displayName: 'CHECK: Snyk monitor'
         script: ./snyk monitor --all-projects
       - script: chmod +x mvnw
       - task: Npm@1
