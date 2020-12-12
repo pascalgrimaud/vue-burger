@@ -30,8 +30,12 @@ jobs:
         displayName: 'INSTALL: Snyk CLI'
       - script: ./snyk test --all-projects || true
         displayName: 'CHECK: Snyk test'
+        env:
+          SNYK_TOKEN: $(SNYK_TOKEN)
       - script: ./snyk monitor --all-projects
         displayName: 'CHECK: Snyk monitor'
+        env:
+          SNYK_TOKEN: $(SNYK_TOKEN)
       - script: chmod +x mvnw
       - task: Npm@1
         inputs:
