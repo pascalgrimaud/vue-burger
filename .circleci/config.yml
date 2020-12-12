@@ -1,0 +1,83 @@
+version: 2.1
+jobs:
+    build:
+        machine:
+            image: circleci/classic:201808-01
+        steps:
+            - checkout
+
+            # Download and cache dependencies
+            - restore_cache:
+                keys:
+                    - v1-dependencies-{{ checksum "pom.xml" }}-{{ checksum "package-lock.json" }}
+                    # Perform a Partial Cache Restore (https://circleci.com/docs/2.0/caching/#restoring-cache)
+                    - v1-dependencies-
+            - run:
+                name: Install OpenJDK 11
+                command: |
+                    sudo rm /var/lib/apt/lists/lock
+                    sudo rm /var/cache/apt/archives/lock
+                    sudo rm /var/lib/dpkg/lock
+                    sudo apt install openjdk-11-jdk
+                    echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/bin:$PATH"' >> $BASH_ENV
+            - run:
+                name: Setup NVM
+                command: |
+                    echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+                    echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+            - run:
+                name: Install Node 14.15.0
+                command: |
+                    nvm install 14.15.0
+                    nvm alias default 14.15.0
+            - run:
+                name: Print Java Version
+                command: 'java -version'
+            - run:
+                name: Print Node Version
+                command: 'node -v'
+            - run:
+                name: Print NPM Version
+                command: 'npm -v'
+            - run:
+                name: Install Node Modules
+                command: 'npm install'
+            - run:
+                name: Install Snyk CLI
+                command: |
+                    curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
+                    chmod +x snyk
+            - run:
+                name: Snyk test
+                command: './snyk test --all-projects'
+            - run:
+                name: Snyk monitor
+                run: './snyk monitor --all-projects'
+            - save_cache:
+                paths:
+                    - node
+                    - node_modules
+                    - ~/.m2
+                key: v1-dependencies-{{ checksum "pom.xml" }}-{{ checksum "package-lock.json" }}
+
+            - run:
+                name: Give Executable Power
+                command: 'chmod +x mvnw'
+            - run:
+                name: Backend tests
+                command: npm run ci:backend:test
+            - run:
+                name: Run Front End Tests
+                command: npm run ci:frontend:test
+            -run:
+                name: 'E2E: Package'
+                command: npm run ci:e2e:package
+            -run:
+                name: 'E2E: Prepare'
+                command: npm run ci:e2e:prepare
+            -run:
+                name: 'E2E: Run'
+                command: npm run ci:e2e:run
+            -run:
+                name: 'E2E: Teardown'
+                command: npm run ci:e2e:teardown
