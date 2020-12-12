@@ -27,6 +27,7 @@ dependency-scanning:
     - chmod +x snyk
     - ./snyk test --all-projects
     - ./snyk monitor --all-projects
+  allow_failure: true
 
 maven-compile:
   stage: build
