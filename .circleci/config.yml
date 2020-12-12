@@ -2,44 +2,15 @@ version: 2.1
 jobs:
     build:
         docker:
-            - image: jhipster/jhipster
+            - image: jhipster/jhipster:v6.10.5
         steps:
             - checkout
-            - setup_remote_docker:
-                version: 19.03.13
             # Download and cache dependencies
-            - run:
-                name: Install docker and docker-compose
-                command: |
-                    echo jhipster | sudo -S apt update
-                    echo jhipster | sudo -S apt install -y docker.io
-                    echo jhipster | sudo -S curl -Lo /usr/local/bin/docker-compose $(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep "browser_download_url.*docker-compose-Linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
-                    echo jhipster | sudo -S chmod +x /usr/local/bin/docker-compose
-                    docker version
-                    docker-compose version
             - restore_cache:
                 keys:
                     - v1-dependencies-{{ checksum "pom.xml" }}-{{ checksum "package-lock.json" }}
                     # Perform a Partial Cache Restore (https://circleci.com/docs/2.0/caching/#restoring-cache)
                     - v1-dependencies-
-            # - run:
-            #     name: Install OpenJDK 11
-            #     command: |
-            #         sudo rm /var/lib/apt/lists/lock
-            #         sudo rm /var/cache/apt/archives/lock
-            #         sudo rm /var/lib/dpkg/lock
-            #         sudo apt install openjdk-11-jdk
-            #         echo 'export PATH="/usr/lib/jvm/java-11-openjdk-amd64/bin:$PATH"' >> $BASH_ENV
-            # - run:
-            #     name: Setup NVM
-            #     command: |
-            #         echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
-            #         echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-            # - run:
-            #     name: Install Node 14.15.0
-            #     command: |
-            #         nvm install 14.15.0
-            #         nvm alias default 14.15.0
             - run:
                 name: Print Java Version
                 command: 'java -version'
@@ -52,17 +23,7 @@ jobs:
             - run:
                 name: Install Node Modules
                 command: 'npm install'
-            - run:
-                name: Install Snyk CLI
-                command: |
-                    curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
-                    chmod +x snyk
-            - run:
-                name: Snyk test
-                command: './snyk test --all-projects || true'
-            - run:
-                name: Snyk monitor
-                command: './snyk monitor --all-projects'
+
             - save_cache:
                 paths:
                     - node
@@ -79,15 +40,3 @@ jobs:
             - run:
                 name: Run Front End Tests
                 command: npm run ci:frontend:test
-            - run:
-                name: 'E2E: Package'
-                command: npm run ci:e2e:package
-            - run:
-                name: 'E2E: Prepare'
-                command: npm run ci:e2e:prepare
-            - run:
-                name: 'E2E: Run'
-                command: npm run ci:e2e:run
-            - run:
-                name: 'E2E: Teardown'
-                command: npm run ci:e2e:teardown
