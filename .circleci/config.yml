@@ -5,6 +5,8 @@ jobs:
             - image: jhipster/jhipster
         steps:
             - checkout
+            - setup_remote_docker:
+                version: 19.03.13
             # Download and cache dependencies
             - restore_cache:
                 keys:
@@ -51,7 +53,7 @@ jobs:
                 command: './snyk test --all-projects || true'
             - run:
                 name: Snyk monitor
-                command: './snyk monitor --all-projects || true'
+                command: './snyk monitor --all-projects'
             - save_cache:
                 paths:
                     - node
