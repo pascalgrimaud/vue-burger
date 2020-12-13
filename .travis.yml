@@ -40,6 +40,10 @@ before_install:
 install:
   - npm install
 script:
+  - curl -Lo ./snyk $(curl -s https://api.github.com/repos/snyk/snyk/releases/latest | grep "browser_download_url.*snyk-linux" | cut -d ':' -f 2,3 | tr -d \" | tr -d ' ')
+  - chmod +x snyk
+  - ./snyk test --all-projects || true
+  - ./snyk monitor --all-projects
   - chmod +x mvnw
   - npm run ci:backend:test
   - npm run ci:frontend:test
